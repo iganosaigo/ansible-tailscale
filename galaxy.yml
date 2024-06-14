@@ -1,0 +1,19 @@
+---
+namespace: iganosaigo
+name: tailscale
+version: 0.0.1
+readme: README.md
+authors:
+  - Alexander Grigoriev <an.grigoriev84@@gmail.com>
+description: Ansible Modules for managing Tailscale and Headscale
+license_file: "LICENSE"
+tags:
+  - tailscale
+  - headscale
+  - administration
+  - vpn
+dependencies: {}
+repository: https://github.com/iganosaigo/ansible-tailscale
+homepage: https://github.com/iganosaigo/ansible-tailscale
+issues: https://github.com/iganosaigo/ansible-tailscale/issues
+build_ignore: []
