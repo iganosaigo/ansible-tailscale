@@ -124,6 +124,51 @@ msg:
   type: str or list
 """
 
+EXAMPLES = r"""
+
+- name: Simple Tailscale login with client defaults
+  iganosaigo.tailscale.tailscale_login:
+    headscale_url: "{{ headscale_url }}"
+    auth_token: "{{ headscale_auth_token }}"
+    api_token: "{{ headscale_api_token }}"
+
+
+- name: Tailscale login with tags and no accept dns or routes
+  iganosaigo.tailscale.tailscale_login:
+    headscale_url: "{{ headscale_url }}"
+    auth_token: "{{ headscale_auth_token }}"
+    api_token: "{{ headscale_api_token }}"
+    accept_dns: false
+    accept_routes: false
+    advertise_tags:
+      - some_tag1
+      - some_tag2
+
+- name: Tailscale login with options, also disable node deltetion after logout
+  iganosaigo.tailscale.tailscale_login:
+    headscale_url: "{{ headscale_url }}"
+    auth_token: "{{ headscale_auth_token }}"
+    api_token: "{{ headscale_api_token }}"
+    accept_dns: true
+    accept_routes: true
+    advertise_tags:
+      - some_tag1
+      - some_tag2
+    hs_clean: false
+
+- name: Tailscale login with custom options, also change node hostname
+  iganosaigo.tailscale.tailscale_login:
+    headscale_url: "{{ headscale_url }}"
+    auth_token: "{{ headscale_auth_token }}"
+    api_token: "{{ headscale_api_token }}"
+    accept_dns: true
+    accept_routes: true
+    register_opts:
+      "--advertise-exit-node"
+      "--snat-subnet-routes"
+    nodename: some_other_name_for_node
+"""
+
 import platform
 from collections import Counter
 

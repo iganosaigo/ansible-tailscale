@@ -93,6 +93,30 @@ msg:
   type: str or list
 """
 
+EXAMPLES = r"""
+
+- name: Configure Tailscale routes and exit-node
+  iganosaigo.tailscale.tailscale_routes:
+    headscale_url: {{ headscale_url }}"
+    api_token: "{{ headscale_api_token }}"
+    advertise:
+      - 12.12.12.0/24
+      - 34.34.34.34/32
+    exit_node: true
+
+- name: Same as above but add custom options
+  iganosaigo.tailscale.tailscale_routes:
+    headscale_url: "{{ headscale_url }}"
+    api_token: "{{ headscale_api_token }}"
+    advertise:
+      - 12.12.12.0/24
+      - 34.34.34.34/32
+    exit_node: true
+    advertise_opts:
+      "--snat-subnet-routes"
+      "--exit-node-allow-lan-access"
+"""
+
 import time
 
 from ansible.module_utils.basic import AnsibleModule
