@@ -31,6 +31,11 @@ options:
       - tailscale_server
       - server
     required: true
+  legacy:
+    description:
+      - Turn on legacy mode for releases before 0.23.0
+    type: bool
+    default: false
   auth_token:
     description:
       - The Headscale Auth Token for node registration.
@@ -193,6 +198,7 @@ class TailscaleLogin(Tailscale):
         self.accept_dns = self.module.params["accept_dns"]
         self.register_opts = self.module.params["register_opts"]
         self.hs_clean = self.module.params["hs_clean"]
+        self.legacy = self.module.params["legacy"]
         super().__init__(self.module, results)
 
         self._prepare()
@@ -206,6 +212,10 @@ class TailscaleLogin(Tailscale):
         else:
             self.init_tags = initial_tags
         self.init_tags = sorted(self.init_tags)
+
+        self.node_uri_part = "node"
+        if self.legacy:
+          self.node_uri_part = "machine"
 
     def _validate_state(self, state):
         if not state in State.values():
@@ -224,13 +234,13 @@ class TailscaleLogin(Tailscale):
 
     def hs_rename_node(self, nodename):
         self.fetch_api(
-            f"/api/v1/machine/{self.node_id}/rename/{nodename}",
+            f"/api/v1/{self.node_uri_part}/{self.node_id}/rename/{nodename}",
             "POST",
         )
 
     def hs_delete_node(self):
         self.fetch_api(
-            f"/api/v1/machine/{self.node_id}",
+            f"/api/v1/{self.node_uri_part}/{self.node_id}",
             "DELETE",
         )
 
@@ -433,6 +443,7 @@ def make_argument_spec():
         sync_check=dict(type="int", default=3),
         socket=dict(type="path", default="/var/run/tailscale/tailscaled.sock"),
         state_file=dict(type="path", default="/var/lib/tailscale/tailscaled.state"),
+        legacy=dict(type="bool", default=False),
     )
 
     return spec

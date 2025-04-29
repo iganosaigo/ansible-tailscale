@@ -10,7 +10,8 @@ Collenction provides a simple way to manage Tailscale registration and configura
 
 ## Headscale version compatibility
 
-Has been tested against Headscale version v0.22.3
+Has been tested against Headscale version v0.22.3 and v0.25.1 but others should be fine though.
+For releases prior v0.23.0 requires to turn on `legacy` mode
 
 ## Ansible version compatibility
 

@@ -31,6 +31,11 @@ options:
       - tailscale_server
       - server
     required: true
+  legacy:
+    description:
+      - Turn on legacy mode for releases before 0.23.0
+    type: bool
+    default: false
   api_token:
     description:
       - The Headscale API Token. Required for configuration on HS side.
@@ -136,6 +141,7 @@ class TailscaleRoutes(Tailscale):
         self.advertise = sorted(self.module.params["advertise"])
         self.advertise_opts = self.module.params["advertise_opts"]
         self.exit_node = self.module.params["exit_node"]
+        self.legacy = self.module.params["legacy"]
         super().__init__(self.module, results)
 
         self._prepare()
@@ -151,7 +157,12 @@ class TailscaleRoutes(Tailscale):
         self.init_ts_routes = status["AllowedIPs"]
         self.init_ts_exit_enabled = status["ExitNodeOption"]
 
+        self.node_uri_part = "node"
+        if self.legacy:
+          self.node_uri_part = "machine"
+
         self.init_hs_routes = self.hs_get_node_routes()
+
 
     def _validate_state(self):
         if not self.init_state in State.values():
@@ -192,7 +203,7 @@ class TailscaleRoutes(Tailscale):
         if not node_id:
             node_id = self.node_id
         resp = self.fetch_api(
-            f"/api/v1/machine/{node_id}/routes",
+            f"/api/v1/{self.node_uri_part}/{node_id}/routes",
         )
         routes = resp["routes"]
         fmt_routes = self._format_routes(routes)
@@ -489,6 +500,7 @@ def make_argument_spec():
         sync_check=dict(type="int", default=3),
         socket=dict(type="path", default="/var/run/tailscale/tailscaled.sock"),
         state_file=dict(type="path", default="/var/lib/tailscale/tailscaled.state"),
+        legacy=dict(type="bool", default=False),
     )
 
     return spec
